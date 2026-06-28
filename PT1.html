@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday! 🩵 Blue Doodle Scrapbook Dreamland</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Poppins:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <style>
+        /* ==========================================================================
+           1. ROOT SYSTEM TOKENS & RESET
+           ========================================================================== */
+        :root {
+            --bg-primary: #DFF4FF;
+            --bg-secondary: #BFE8FF;
+            --accent-blue: #8ED8FF;
+            --dark-accent: #4A6FA5;
+            --white: #FFFFFF;
+            --color-1: #EAF9FF;
+            --color-2: #CDEFFF;
+            --color-3: #A9E2FF;
+            --color-4: #6BBEFF;
+            
+            --font-main: 'Nunito', sans-serif;
+            --font-display: 'Fredoka', sans-serif;
+            
+            --doodle-stroke: #4A6FA5;
+            --shadow-doodle: 5px 5px 0px #4A6FA5;
+            --shadow-hover: 8px 8px 0px #4A6FA5;
+            --shadow-active: 2px 2px 0px #4A6FA5;
+            
+            --transition-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            font-family: var(--font-main);
+            background-color: var(--bg-primary);
+            color: var(--dark-accent);
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* Handcrafted Notebook Scrollbar Matrix */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--color-1); border-left: 2px solid var(--doodle-stroke); }
+        ::-webkit-scrollbar-thumb { background: var(--color-4); border: 2px solid var(--doodle-stroke); border-radius: 4px; }
+
+        /* ==========================================================================
+           2. GLOBAL ANIMATION ENGINE UTILITIES
+           ========================================================================== */
+        #global-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        @keyframes doodleWobble {
+            0% { transform: rotate(0deg); border-radius: 255px 15px 225px 15px/15px 225px 15px 255px; }
+            50% { transform: rotate(1deg); border-radius: 240px 20px 210px 25px/20px 210px 25px 240px; }
+            100% { transform: rotate(-0.5deg); border-radius: 250px 18px 220px 20px/18px 215px 20px 245px; }
+        }
+
+        @keyframes floatGently {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(1.5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        @keyframes spinDVD {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .doodle-box {
+            background: var(--white);
+            border: 3px solid var(--doodle-stroke);
+            box-shadow: var(--shadow-doodle);
+            animation: doodleWobble 6s ease-in-out infinite alternate;
+        }
+
+        /* Interactive Hand-drawn Button Matrix */
+        .btn-doodle {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            color: var(--dark-accent);
+            background: var(--white);
+            border: 3px solid var(--doodle-stroke);
+            padding: 12px 26px;
+            border-radius: 30px 12px 35px 15px / 15px 30px 12px 35px;
+            box-shadow: var(--shadow-doodle);
+            cursor: pointer;
+            transition: transform 0.15s var(--transition-bounce), box-shadow 0.15s var(--transition-bounce), background-color 0.2s ease;
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            outline: none;
+        }
+
+        .btn-doodle:hover {
+            transform: scale(1.05) translate(-2px, -2px);
+            box-shadow: var(--shadow-hover);
+            background: var(--color-1);
+        }
+
+        .btn-doodle:active {
+            transform: scale(0.98) translate(3px, 3px);
+            box-shadow: var(--shadow-active);
+        }
+
+        /* Navigation Route Stage Switches */
+        .app-stage {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s var(--transition-smooth), transform 0.5s var(--transition-bounce);
+            transform: scale(0.96);
+            z-index: 5;
+            padding: 20px;
+        }
+
+        .app-stage.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1);
+        }
+
+        /* ==========================================================================
+           3. PRELOADER ENGINE
+           ========================================================================== */
+        #preloader-stage {
+            background: var(--bg-primary);
+            z-index: 9999;
+            pointer-events: auto;
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .loader-cake-icon {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 25px;
+            animation: floatGently 3s ease-in-out infinite;
+        }
+
+        .progress-box { width: 260px; text-align: center; }
+        .progress-title { font-family: var(--font-display); font-size: 1.2rem; margin-bottom: 12px; }
+        
+        .bar-container {
+            width: 100%; height: 18px; background: var(--white);
+            border: 3px solid var(--doodle-stroke); border-radius: 20px;
+            overflow: hidden; position: relative;
+        }
+
+        .bar-fill {
+            width: 0%; height: 100%; background: var(--color-4);
+            border-right: 3px solid var(--doodle-stroke);
+            transition: width 0.1s linear;
+        }
+
+        /* ==========================================================================
+           4. PASSCODE PIN SECURITY MATRIX
+           ========================================================================== */
+        #auth-stage { background: var(--bg-primary); }
+        
+        .auth-card {
+            padding: 30px 20px; max-width: 360px; width: 100%; text-align: center;
+            background: rgba(255, 255, 255, 0.95); border-radius: 24px;
+        }
+
+        .auth-card h2 { font-family: var(--font-display); font-size: 1.6rem; margin-bottom: 6px; }
+        .auth-card p { font-size: 0.85rem; margin-bottom: 20px; opacity: 0.8; }
+        
+        .pin-indicator-row { display: flex; justify-content: center; gap: 14px; margin-bottom: 20px; }
+        
+        .indicator-dot {
+            width: 16px; height: 16px; border: 3px solid var(--doodle-stroke);
+            background: var(--white); border-radius: 50%;
+            transition: transform 0.2s var(--transition-bounce), background-color 0.2s ease;
+        }
+
+        .indicator-dot.filled { background: var(--color-4); transform: scale(1.2); }
+        .pin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 230px; margin: 0 auto; }
+        
+        .pin-key {
+            background: var(--white); border: 2px solid var(--doodle-stroke);
+            font-family: var(--font-display); font-size: 1.2rem; width: 55px; height: 55px;
+            border-radius: 50%; cursor: pointer; box-shadow: 3px 3px 0px var(--doodle-stroke);
+            display: flex; align-items: center; justify-content: center; margin: 0 auto;
+        }
+
+        .pin-key:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0px var(--doodle-stroke); background: var(--color-2); }
+        
+        .error-shake { animation: shakeWidget 0.4s ease-in-out; }
+        @keyframes shakeWidget {
+            0%, 100% { transform: translateX(0); }
+            25%, 75% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+        }
+
+        /* ==========================================================================
+           5. CENTRAL ROUTER HUB & RESPONSIVE DOCK SYSTEM
+           ========================================================================== */
+        #app-hub-layer { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 10; pointer-events: none; display: none; }
+        #app-hub-layer.active { display: block; }
+        
+        .nav-dock { position: fixed; z-index: 999; pointer-events: auto; transition: transform 0.3s var(--transition-bounce); }
+
+        @media (min-width: 769px) {
+            .nav-dock {
+                top: 20px; left: 50%; transform: translateX(-50%);
+                background: rgba(255, 255, 255, 0.95); border: 3px solid var(--doodle-stroke);
+                padding: 6px 16px; border-radius: 40px; box-shadow: var(--shadow-doodle);
+                display: flex; gap: 4px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-dock {
+                bottom: 12px; left: 8px; right: 8px;
+                background: rgba(255, 255, 255, 0.96); border: 3px solid var(--doodle-stroke);
+                padding: 6px 2px; border-radius: 18px; box-shadow: var(--shadow-doodle);
+                display: grid; grid-template-columns: repeat(8, 1fr); gap: 1px; justify-items: center;
+            }
+        }
+
+        .nav-btn {
+            background: transparent; border: none; outline: none; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 6px 8px; border-radius: 12px; color: var(--dark-accent);
+            font-family: var(--font-display); font-size: 0.65rem; font-weight: 600; gap: 2px;
+        }
+
+        @media (max-width: 600px) { .nav-btn span { display: none; } .nav-btn { padding: 8px 0; } }
+
+        .nav-btn svg {
+            width: 20px; height: 20px; fill: none; stroke: var(--dark-accent);
+            stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;
+            transition: transform 0.2s var(--transition-bounce);
+        }
+
+        .nav-btn:hover svg { transform: scale(1.15) rotate(-3deg); }
+        .nav-btn.active { background: var(--color-3); }
+
+        .viewport-container {
+            width: 100%; max-width: 860px; margin: 0 auto;
+            height: calc(100% - 130px); margin-top: 60px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            position: relative;
+        }
+
+        @media (max-width: 768px) { .viewport-container { height: calc(100% - 110px); margin-top: 15px; } }
+
+        /* Configuration Safety Gear placement */
+        .utility-gear-node {
+            position: fixed; bottom: 90px; right: 20px; z-index: 1000;
+            background: var(--white); border: 2px solid var(--doodle-stroke);
+            width: 40px; height: 40px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; cursor: pointer;
+            box-shadow: 2px 2px 0 var(--doodle-stroke); pointer-events: auto;
+        }
+
+        @media (max-width: 768px) { .utility-gear-node { bottom: auto; top: 20px; left: 20px; right: auto; } }
+
+        /* ==========================================================================
+           6. JUKEBOX MEDIA MODULE (DVD-STYLE INTEGRATION)
+           ========================================================================== */
+        .dvd-player-cabinet {
+            background: var(--white); border: 3px solid var(--doodle-stroke);
+            box-shadow: var(--shadow-doodle); border-radius: 24px;
+            width: 100%; max-width: 440px; padding: 24px; text-align: center;
+        }
+
+        .dvd-deck-bay {
+            background: var(--color-1); border: 2px solid var(--doodle-stroke);
+            border-radius: 16px; padding: 20px; margin-bottom: 20px;
+            display: flex; flex-direction: column; align-items: center; gap: 12px;
+        }
+
+        .dvd-disc-platter {
+            width: 110px; height: 110px; background: #3a506b;
+            border: 3px solid var(--doodle-stroke); border-radius: 50%;
+            position: relative; display: flex; align-items: center; justify-content: center;
+            box-shadow: inset 0 0 0 10px rgba(255,255,255,0.08), inset 0 0 0 25px rgba(0,0,0,0.25);
+        }
+
+        .dvd-disc-platter::before {
+            content: ''; position: absolute; width: 85%; height: 85%;
+            border: 1px dashed rgba(255,255,255,0.2); border-radius: 50%;
+        }
+
+        .dvd-disc-center { width: 32px; height: 32px; background: var(--accent-blue); border: 2px solid var(--doodle-stroke); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .dvd-disc-hole { width: 10px; height: 10px; background: var(--color-1); border: 1px solid var(--doodle-stroke); border-radius: 50%; }
+        
+        .dvd-disc-platter.spinning { animation: spinDVD 3s linear infinite; }
+        
+        .dvd-display-ticker {
+            font-family: var(--font-display); font-size: 1.05rem;
+            background: var(--white); border: 2px solid var(--doodle-stroke);
+            width: 100%; padding: 6px; border-radius: 8px; overflow: hidden; white-space: nowrap;
+        }
+
+        .dvd-tracklist-scroll-tray {
+            max-height: 140px; overflow-y: auto; text-align: left;
+            display: flex; flex-direction: column; gap: 6px; padding-right: 4px;
+        }
+
+        .track-row-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 8px 12px; background: var(--color-1); border: 2px solid var(--doodle-stroke);
+            border-radius: 10px; cursor: pointer; font-size: 0.85rem; font-weight: 700;
+        }
+
+        .track-row-item.active { background: var(--accent-blue); }
+
+        /* ==========================================================================
+           7. COMPLETELY SEALED SECURE NOTEBOOK ENVELOPE MODULE
+           ========================================================================== */
+        .envelope-wrapper-box {
+            position: relative;
+            width: 330px;
+            height: 220px;
+            background: var(--white);
+            border: 3px solid var(--doodle-stroke);
+            box-shadow: var(--shadow-doodle);
+            border-radius: 14px;
+            margin-top: 40px;
+            overflow: visible; /* Allows letter to slide upward outside the container */
+        }
+
+        /* Diagonal pocket panels masking the internal letter card */
+        .envelope-pocket-left {
+            position: absolute; bottom: 0; left: 0; width: 0; height: 0;
+            border-left: 162px solid var(--color-2);
+            border-top: 108px solid transparent;
+            border-bottom: 108px solid var(--color-2);
+            border-radius: 0 0 0 10px;
+            z-index: 4;
+            pointer-events: none;
+        }
+
+        .envelope-pocket-right {
+            position: absolute; bottom: 0; right: 0; width: 0; height: 0;
+            border-right: 162px solid var(--color-2);
+            border-top: 108px solid transparent;
+            border-bottom: 108px solid var(--color-2);
+            border-radius: 0 0 10px 0;
+            z-index: 4;
+            pointer-events: none;
+        }
+
+        .envelope-top-flap {
+            position: absolute; top: -1px; left: -1px; width: 326px; height: 115px;
+            background: var(--color-4);
+            clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+            transform-origin: top center;
+            transition: transform 0.5s var(--transition-smooth);
+            z-index: 5;
+        }
+
+        /* Complete Content Shield: hidden, masked, zero size, unreadable until state changes */
+        .notebook-letter {
+            position: absolute;
+            bottom: 10px;
+            left: 15px;
+            width: 294px;
+            height: 0px; /* Completely flattened and hidden inside base */
+            background: #FFFDF0;
+            border: 2px solid var(--doodle-stroke);
+            padding: 0px;
+            opacity: 0;
+            visibility: hidden;
+            z-index: 2;
+            transition: transform 0.6s var(--transition-bounce), height 0.6s var(--transition-bounce), opacity 0.3s ease, padding 0.3s ease;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            box-shadow: none;
+            overflow: hidden;
+        }
+
+        /* Interactive Wax Seal Button Key */
+        .wax-seal-button-node {
+            position: absolute; top: 92px; left: 141px; width: 45px; height: 45px;
+            background: #ff758f; border: 3px solid var(--doodle-stroke); border-radius: 50%;
+            z-index: 6; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            box-shadow: 2px 2px 0 var(--doodle-stroke); font-size: 0.95rem;
+            transition: opacity 0.3s ease, transform 0.2s var(--transition-bounce);
+        }
+
+        .wax-seal-button-node:hover { transform: scale(1.1); }
+
+        /* ACTIVE UNSEALED SYSTEM TRANSITIONS */
+        .envelope-wrapper-box.opened .envelope-top-flap {
+            transform: rotateX(180deg) translateY(2px);
+            z-index: 1;
+        }
+
+        .envelope-wrapper-box.opened .wax-seal-button-node {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .envelope-wrapper-box.opened .notebook-letter {
+            visibility: visible;
+            opacity: 1;
+            padding: 20px 16px;
+            height: 290px;
+            /* Pops upward directly out of the secure structural card container */
+            transform: translateY(-160px) scale(1.04);
+            z-index: 7;
+            overflow-y: auto;
+            box-shadow: 0px 15px 30px rgba(74, 111, 165, 0.25);
+        }
+
+        .notebook-close-ribbon {
+            display: none; text-align: right; margin-top: 15px;
+        }
+        .envelope-wrapper-box.opened .notebook-close-ribbon { display: block; }
+
+        /* ==========================================================================
+           8. PAGE SPECIFIC MODULE STRUCTURAL CODES
+           ========================================================================== */
+        
+        /* Welcome Stage */
+        .welcome-hero-box { text-align: center; animation: floatGently 4s ease-in-out infinite; }
+        .welcome-title { font-family: var(--font-display); font-size: 3.5rem; color: var(--dark-accent); text-shadow: 4px 4px 0px var(--white); line-height: 1.15; margin-bottom: 20px; }
+        @media (min-width: 768px) { .welcome-title { font-size: 5rem; } }
+        .welcome-badge { font-family: var(--font-main); font-size: 1.05rem; font-weight: 700; background: var(--white); padding: 10px 22px; display: inline-block; border: 3px solid var(--doodle-stroke); box-shadow: 4px 4px 0px var(--doodle-stroke); border-radius: 14px; }
+
+        /* Scrapbook Gallery Grid */
+        .scrapbook-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; width: 100%; max-width: 540px; padding: 10px; overflow-y: auto; max-height: 100%; }
+        @media (max-width: 480px) { .scrapbook-grid { grid-template-columns: 1fr; } }
+         .polaroid-item { background: var(--white); padding: 12px 12px 22px 12px; border: 3px solid var(--doodle-stroke); box-shadow: var(--shadow-doodle); transform: rotate(var(--item-rotation, -1deg)); cursor: pointer; }
+        .polaroid-item:hover { transform: scale(1.04) rotate(0deg); z-index: 8; }
+        .polaroid-placeholder { width: 100%; aspect-ratio: 1.05; background: var(--color-2); border: 2px solid var(--doodle-stroke); display: flex; align-items: center; justify-content: center; }
+        .polaroid-placeholder svg { width: 40%; height: 40%; opacity: 0.7; }
+        .polaroid-tag { font-family: var(--font-display); margin-top: 12px; text-align: center; font-size: 0.9rem; }
+
+        /* Interactive Unboxing Surprise Boxes */
+        .gift-container-box { width: 180px; height: 180px; position: relative; cursor: pointer; margin-bottom: 25px; }
+        .gift-svg-asset { width: 100%; height: 100%; }
+        .gift-container-box.idle-float { animation: floatGently 3.5s ease-in-out infinite; }
+        .gift-container-box.shake-action { animation: errorShake 0.25s linear infinite; }
+        @keyframes errorShake { 0%, 100% { transform: translateX(0); } 33% { transform: translateX(-6px) rotate(-1.5deg); } 66% { transform: translateX(6px) rotate(1.5deg); } }
+        .gift-lid-node { transform-origin: bottom center; transition: transform 0.45s var(--transition-bounce), opacity 0.3s ease; }
+        .gift-container-box.unboxed .gift-lid-node { transform: translateY(-70px) rotate(-10deg) scale(0.85); opacity: 0; }
+
+        /* Botanical Flower Beds */
+        .flower-bed-row { display: flex; justify-content: center; gap: 40px; width: 100%; flex-wrap: wrap; padding: 15px; }
+        .garden-node-pot { display: flex; flex-direction: column; align-items: center; cursor: pointer; position: relative; }
+        .stem-drawing { width: 80px; height: 150px; transform-origin: bottom center; animation: floatGently 4s ease-in-out infinite alternate; }
+        .garden-node-pot:nth-child(2) .stem-drawing { animation-delay: -1.5s; }
+        .bloom-petal-group { transform: scale(0); transform-origin: 50% 68px; transition: transform 0.7s var(--transition-bounce); }
+        .garden-node-pot.bloomed .bloom-petal-group { transform: scale(1); }
+        .garden-toast-bubble { position: absolute; bottom: 165px; background: var(--white); border: 2px solid var(--doodle-stroke); padding: 6px 14px; border-radius: 12px; font-size: 0.8rem; font-weight: 700; box-shadow: 2.5px 2.5px 0 var(--doodle-stroke); opacity: 0; transform: scale(0.75); transition: all 0.3s var(--transition-bounce); pointer-events: none; white-space: nowrap; }
+        .garden-node-pot.bloomed .garden-toast-bubble { opacity: 1; transform: scale(1); }
+
+        /* Birthday Cake Mechanics */
+        .cake-stage-wrapper { position: relative; width: 240px; height: 260px; margin-bottom: 30px; }
+        .cake-vector { width: 100%; height: 100%; }
+        .live-flame { animation: dynamicFlameFlicker 0.6s ease-in-out infinite alternate; transform-origin: center bottom; fill: #8ED8FF; filter: drop-shadow(0px 0px 5px #8ED8FF); }
+        @keyframes dynamicFlameFlicker { 0% { transform: scale(1) rotate(-3deg); } 100% { transform: scale(1.15) rotate(4deg); } }
+        .live-flame.blown-out { display: none !important; }
+        .mic-badge-indicator { margin-top: 15px; font-size: 0.85rem; font-weight: 700; background: var(--color-2); padding: 5px 14px; border-radius: 20px; border: 2px solid var(--doodle-stroke); }
+
+        /* Grand Finale Interactive Celebration Screen */
+        .finale-title { font-family: var(--font-display); font-size: 3rem; text-align: center; line-height: 1.2; margin-bottom: 20px; }
+        .finale-scroll-card { background: var(--white); border: 3px solid var(--doodle-stroke); box-shadow: var(--shadow-doodle); padding: 30px 24px; border-radius: 20px; max-width: 460px; width: 100%; text-align: center; font-size: 1.05rem; line-height: 1.65; }
+
+        /* Overlaid Reusable Lightboxes */
+        .lightbox-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(74, 111, 165, 0.5); backdrop-filter: blur(4px); z-index: 2500; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; }
+        .lightbox-overlay.active { display: flex; opacity: 1; }
+        .lightbox-card-body { max-width: 90%; width: 380px; background: var(--white); padding: 24px; border: 3px solid var(--doodle-stroke); box-shadow: var(--shadow-doodle); border-radius: 16px; text-align: center; }
+        
+        .config-input-node { width: 100%; max-width: 160px; padding: 8px; font-family: var(--font-display); text-align: center; font-size: 1.1rem; border: 2px solid var(--doodle-stroke); border-radius: 8px; margin-bottom: 12px; }
+    </style>
+</head>
+<body>
+
+    <audio id="core-audio-node" loop></audio>
+
+    <canvas id="global-canvas"></canvas>
+
+    <div class="utility-gear-node" id="global-config-trigger" title="Settings Menu" onclick="App.Modules.Config.open()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4A6FA5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+    </div>
+
+    <section class="app-stage active" id="preloader-stage">
+        <svg class="loader-cake-icon" viewBox="0 0 100 100">
+            <path d="M20,70 Q50,75 80,70 L80,90 Q50,95 20,90 Z" fill="#FFFFFF" stroke="#4A6FA5" stroke-width="3"/>
+            <path d="M25,45 Q50,50 75,45 L75,70 Q50,75 25,70 Z" fill="#BFE8FF" stroke="#4A6FA5" stroke-width="3"/>
+            <rect x="47" y="25" width="6" height="20" rx="2" fill="#8ED8FF" stroke="#4A6FA5" stroke-width="2"/>
+            <path d="M50,12 Q53,18 50,25 Q47,18 50,12 Z" fill="#6BBEFF"/>
+        </svg>
+        <div class="progress-box">
+            <div class="progress-title" id="loader-numerical-view">Opening Scrapbook... 0%</div>
+            <div class="bar-container"><div class="bar-fill" id="loader-progress-bar"></div></div>
+        </div>
+    </section>
+
+    <section class="app-stage" id="auth-stage">
+        <div class="auth-card doodle-box" id="auth-shaking-node">
+            <h2>Unlock Album</h2>
+            <p>Enter the security PIN combination code</p>
+            
+            <div class="pin-indicator-row">
+                <div class="indicator-dot" id="pindot-0"></div>
+                <div class="indicator-dot" id="pindot-1"></div>
+                <div class="indicator-dot" id="pindot-2"></div>
+                <div class="indicator-dot" id="pindot-3"></div>
+            </div>
+
+            <div class="pin-grid">
+                <button class="pin-key" onclick="App.Auth.append(1)">1</button>
+                <button class="pin-key" onclick="App.Auth.append(2)">2</button>
+                <button class="pin-key" onclick="App.Auth.append(3)">3</button>
+                <button class="pin-key" onclick="App.Auth.append(4)">4</button>
+                <button class="pin-key" onclick="App.Auth.append(5)">5</button>
+                <button class="pin-key" onclick="App.Auth.append(6)">6</button>
+                <button class="pin-key" onclick="App.Auth.append(7)">7</button>
+                <button class="pin-key" onclick="App.Auth.append(8)">8</button>
+                <button class="pin-key" onclick="App.Auth.append(9)">9</button>
+                <button class="pin-key" style="font-size:0.8rem;" onclick="App.Auth.clear()">CLR</button>
+                <button class="pin-key" onclick="App.Auth.append(0)">0</button>
+                <button class="pin-key" style="font-size:0.8rem;" onclick="App.Auth.drop()">⌫</button>
+            </div>
+        </div>
+    </section>
+
+    <div id="app-hub-layer">
+        
+        <nav class="nav-dock">
+            <button class="nav-btn active" onclick="App.Router.navigate('home')" id="nav-home">
+                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+                <span>Home</span>
+            </button>
+            <button class="nav-btn" onclick="App.Router.navigate('music')" id="nav-music">
+                <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+                <span>Jukebox</span>
+            </button>
+            <button class="nav-btn" onclick="App.Router.navigate('letter')" id="nav-letter">
+                <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                <span>Letter</span>
+            </button>
+            <button class="nav-btn" onclick="App.Router.navigate('memories')" id="nav-memories">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                <span>Photos</span>
+            </button>
+            <button class="nav-btn" onclick="App.Router.navigate('gift')" id="nav-gift">
+                <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M12 22V7M2 12h20"></path></svg>
+                <span>Gift</span>
+            </button>
+            <button class="nav-btn" onclick="App.Router.navigate('flowers')" id="nav-flowers">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg>
+                <span>Garden</span>
+            </button>
+            <button class="nav-btn" onclick="App.Router.navigate('cake')" id="nav-cake">
+                <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+                <span>Cake</span>
+            </button>
+            <button class="nav-btn" onclick="App.Router.navigate('celebration')" id="nav-celebration">
+                <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                <span>Party</span>
+            </button>
+        </nav>
+
+        <section class="app-stage" id="stage-home">
+            <div class="viewport-container">
+                <div class="welcome-hero-box">
+                    <h1 class="welcome-title">HAPPY<br>BIRTHDAY!</h1>
+                    <div class="welcome-badge">Welcome to Your Blue Notebook Dreamland 🩵</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="app-stage" id="stage-music">
+            <div class="viewport-container">
+                <div class="dvd-player-cabinet">
+                    <h3 style="font-family:var(--font-display); margin-bottom:15px;">Doodle DVD Jukebox</h3>
+                    
+                    <div class="dvd-deck-bay">
+                        <div class="dvd-disc-platter" id="dvd-spinning-disc-element">
+                            <div class="dvd-disc-center"><div class="dvd-disc-hole"></div></div>
+                        </div>
+                        <div class="dvd-display-ticker" id="dvd-track-marquee-text">No Disc Loaded</div>
+                    </div>
+
+                    <div class="dvd-tracklist-scroll-tray" id="dvd-tracks-injector-target">
+                        </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="app-stage" id="stage-letter">
+            <div class="viewport-container">
+                <div class="envelope-wrapper-box" id="interactive-envelope-wrapper">
+                    <div class="envelope-pocket-left"></div>
+                    <div class="envelope-pocket-right"></div>
+                    <div class="envelope-top-flap"></div>
+                    
+                    <div class="wax-seal-button-node" onclick="App.Modules.Letter.open()" id="envelope-seal-trigger">🩵</div>
+                    
+                    <div class="notebook-letter" id="notebook-letter-body">
+                        <h4 style="font-family:var(--font-display); margin-bottom:8px; border-bottom: 2px dashed var(--accent-blue); padding-bottom: 4px;">Dearest You,</h4>
+                        <p>hi, twin.
+<br>
+first of all, happy birthday. i know i told you the first time we talked that i would be the first to greet you on your birthday, but i wasn’t able to, and i’m really sorry. in the two months that i got to know you, i learned so many things about myself and about life. it really hit me hard because you became the one person i looked forward to talking to every single day. whenever you were there, i genuinely felt complete. and you know, now that we don’t talk anymore, i always find myself wondering what’s missing in me. then i realized—i keep coming back to the same answer. ikaw pala talaga yung kulang. i’m not saying all of this because i want you to come back or to change anything. i just want you to know how much light and comfort you brought into my life. with you, i felt like i already had everything :>>
+<br>
+even though you’re an avoidant person, i truly appreciate that you still tried your best to fight that side of yourself for me. that alone meant more than enough to me, and i’ll always be grateful for it. i want you to know, again and again, that i’m really, really grateful that i got to meet someone like you. hindi ka mahirap mahalin. hindi ka mahirap intindihin. hindi ka mahirap magustuhan. to me, you’ll always be the better one. i used to tell you those things over and over because i wanted you to believe that you’re more than enough. you never had to compare yourself to anyone else. i honestly don’t know what i did to deserve meeting you, even if it was only for a short time. i don’t even know the right words to describe how happy i was when you came into my life. there were so many things i did for you that i had never done for anyone else, and that’s my “why”.
+<br>
+i hope you’re happy and feel complete, even without me. more than anything, i’m happy as long as you’re doing okay. just like i told you the last time we talked, i’ll always be rooting for your happiness and success in life. i’ll forever be cheering for you—from afar. i hope you find someone who will love you as deeply as you deserve and who will take care of your heart. happy birthday again, starlight. i love you.</p>
+                        <div class="notebook-close-ribbon">
+                            <button class="btn-doodle" style="padding:4px 10px; font-size:0.75rem;" onclick="App.Modules.Letter.close()">Reseal Note</button>
+                        </div>
+                    </div>
+                </div>
+                <p style="margin-top:20px; font-size:0.85rem; font-weight:700;">(Tap wax seal to unwrap or close the letter)</p>
+            </div>
+        </section>
+
+        <section class="app-stage" id="stage-memories">
+    <div class="viewport-container">
+        <div class="scrapbook-grid">
+            <!-- 1. COZY SPACES POLAROID -->
+            <div class="polaroid-item" style="--item-rotation: -2deg;" onclick="App.Modules.Gallery.open('Quiet Morning Radiance', 'Finding clarity within soft blue aesthetic backdrops.')">
+                <div class="polaroid-placeholder">
+                    <!-- Replace 'cozy.jpg' with your image path or web URL -->
+                    <img src="jazmin.png" alt="Cozy Spaces" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                </div>
+                <div class="polaroid-tag">Cozy Spaces</div>
+            </div>
+
+            <!-- 2. DREAMCATCHER POLAROID -->
+            <div class="polaroid-item" style="--item-rotation: 2.5deg;" onclick="App.Modules.Gallery.open('Constellation Wanderer', 'Navigating boundless imaginative oceans beneath the stars.')">
+                <div class="polaroid-placeholder">
+                    <!-- Replace 'dreamcatcher.jpg' with your image path or web URL -->
+                    <img src="solace.jpeg" alt="Dreamcatcher" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                </div>
+                <div class="polaroid-tag">Dreamcatcher</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+        <section class="app-stage" id="stage-gift">
+            <div class="viewport-container">
+                <div class="gift-container-box idle-float" id="gift-box-interactive-node" onclick="App.Modules.Gift.unbox()">
+                    <svg class="gift-svg-asset" viewBox="0 0 100 100">
+                        <g class="gift-lid-node">
+                            <rect x="15" y="25" width="70" height="15" rx="3" fill="#FFFFFF" stroke="#4A6FA5" stroke-width="3"/>
+                            <path d="M45,25 Q50,10 40,10 Q35,10 45,25" fill="#8ED8FF" stroke="#4A6FA5" stroke-width="2.5"/>
+                            <path d="M55,25 Q50,10 60,10 Q65,10 55,25" fill="#8ED8FF" stroke="#4A6FA5" stroke-width="2.5"/>
+                        </g>
+                        <rect x="20" y="40" width="60" height="45" rx="2" fill="#BFE8FF" stroke="#4A6FA5" stroke-width="3"/>
+                        <rect x="45" y="40" width="10" height="45" fill="#8ED8FF" stroke="#4A6FA5" stroke-width="2"/>
+                    </svg>
+                </div>
+                <h3 id="gift-status-label" style="font-family:var(--font-display); text-align:center;">Click to Open Gift!</h3>
+            </div>
+        </section>
+        
+         <section class="app-stage" id="stage-gift">
+            <div class="viewport-container">
+                <div class="gift-container-box idle-float" id="gift-box-interactive-node" onclick="App.Modules.Gift.unbox()">
+                    <svg class="gift-svg-asset" viewBox="0 0 100 100">
+                        <g class="gift-lid-node">
+                            <rect x="15" y="25" width="70" height="15" rx="3" fill="#FFFFFF" stroke="#4A6FA5" stroke-width="3"/>
+                            <path d="M45,25 Q50,10 40,10 Q35,10 45,25" fill="#8ED8FF" stroke="#4A6FA5" stroke-width="2.5"/>
+                            <path d="M55,25 Q50,10 60,10 Q65,10 55,25" fill="#8ED8FF" stroke="#4A6FA5" stroke-width="2.5"/>
+                        </g>
+                        <rect x="20" y="40" width="60" height="45" rx="2" fill="#BFE8FF" stroke="#4A6FA5" stroke-width="3"/>
+                        <rect x="45" y="40" width="10" height="45" fill="#8ED8FF" stroke="#4A6FA5" stroke-width="2"/>
+                    </svg>
+                </div>
+                <h3 id="gift-status-label" style="font-family:var(--font-display); text-align:center;">Click to Open Gift!</h3>
+            </div>
+        </section>
+
+        <section class="app-stage" id="stage-flowers">
+            <div class="viewport-container">
+                <div class="flower-bed-row">
+                    <div class="garden-node-pot" onclick="App.Modules.Garden.triggerBloom(this)">
+                        <div class="garden-toast-bubble">You bring magic into the world! ✨</div>
+                        <svg class="stem-drawing" viewBox="0 0 100 200">
+                            <path d="M50,200 Q45,130 50,70" fill="none" stroke="#4A6FA5" stroke-width="4"/>
+                            <path d="M50,140 Q25,120 50,110" fill="#BFE8FF" stroke="#4A6FA5" stroke-width="2"/>
+                            <g class="bloom-petal-group">
+                                <circle cx="50" cy="45" r="16" fill="#8ED8FF" stroke="#4A6FA5" stroke-width="2"/>
+                                <circle cx="28" cy="65" r="16" fill="#8ED8FF" stroke="#4A6FA5" stroke-width="2"/>
+                                <circle cx="72" cy="65" r="16" fill="#8ED8FF" stroke="#4A6FA5" stroke-width="2"/>
+                                <circle cx="50" cy="68" r="14" fill="#FFFFFF" stroke="#4A6FA5" stroke-width="2"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="app-stage" id="stage-cake">
+            <div class="viewport-container">
+                <div class="cake-stage-wrapper">
+                    <svg class="cake-vector" viewBox="0 0 100 120">
+                        <path d="M10,80 Q50,86 90,80 L90,110 Q50,116 10,110 Z" fill="#FFFFFF" stroke="#4A6FA5" stroke-width="3"/>
+                        <path d="M10,80 Q20,90 30,82 Q40,92 50,82 Q60,92 70,82 Q80,92 90,80" fill="none" stroke="#4A6FA5" stroke-width="2.5"/>
+                        <path d="M20,45 Q50,50 80,45 L80,80 Q50,86 20,80 Z" fill="#BFE8FF" stroke="#4A6FA5" stroke-width="3"/>
+                        <g id="cake-candle-node">
+                            <rect x="47" y="22" width="6" height="25" rx="2" fill="#6BBEFF" stroke="#4A6FA5" stroke-width="2"/>
+                            <path class="live-flame" id="candle-flame-vector" d="M50,5 Q54,12 50,22 Q46,12 50,5 Z"/>
+                        </g>
+                    </svg>
+                </div>
+                <button class="btn-doodle" id="manual-blow-fallback-btn" onclick="App.Modules.Cake.extinguishCandle()">
+                    <span>BLOW OUT THE CANDLES 🎂</span>
+                </button>
+                <div class="mic-badge-indicator" id="mic-badge-status">Checking Microphone Settings...</div>
+            </div>
+        </section>
+
+        <section class="app-stage" id="stage-celebration">
+            <div class="viewport-container">
+                <h2 class="finale-title">Have an Amazing Birthday! 🎉</h2>
+                <div class="finale-scroll-card doodle-box">
+                    <p style="margin-bottom:12px; font-weight:700;">"May your days remain beautiful, creative, and bright."</p>
+                    <p style="font-size:0.85rem; opacity:0.8;">Thank you for stepping into this interactive blue doodle dreamland. Use the navigation panel below to revisit any page at your leisure.</p>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <div class="lightbox-overlay" id="global-scrapbook-lightbox" onclick="App.Modules.Gallery.close()">
+        <div class="lightbox-card-body" onclick="event.stopPropagation()">
+            <h3 id="lb-title-node" style="font-family:var(--font-display); margin-bottom:10px;">Memory Title</h3>
+            <p id="lb-desc-node">Memory description body text.</p>
+            <button class="btn-doodle" style="margin-top:15px; padding:6px 14px; font-size:0.85rem;" onclick="App.Modules.Gallery.close()">Dismiss</button>
+        </div>
+    </div>
+
+    <div class="lightbox-overlay" id="global-config-lightbox" onclick="App.Modules.Config.close()">
+        <div class="lightbox-card-body" onclick="event.stopPropagation()">
+            <h3 style="font-family:var(--font-display); margin-bottom:12px;">Reset Access PIN</h3>
+            <p style="font-size:0.85rem; margin-bottom:15px;">Set a custom 4-digit combination to secure the interactive notebook:</p>
+            <input type="text" class="config-input-node" id="config-pin-field" maxlength="4" placeholder="1234">
+            <div>
+                <button class="btn-doodle" style="padding:6px 14px; font-size:0.85rem;" onclick="App.Modules.Config.save()">Save Code</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const App = {
+            State: {
+                activeStage: 'preloader',
+                inputPinBuffer: '',
+                masterSecurityPin: '1234', 
+                candlesActive: true,
+                giftBoxOpened: false
+            },
+
+            init: function() {
+                this.Engine.Canvas.setupContext();
+                this.Modules.Music.assembleCabinet();
+                this.UX.executePreloader();
+                window.addEventListener('resize', () => this.Engine.Canvas.handleResize());
+            },
+
+            Engine: {
+                Canvas: {
+                    domElement: null, context: null, particleArray: [], backgroundItems: [],
+                    setupContext: function() {
+                        this.domElement = document.getElementById('global-canvas');
+                        this.context = this.domElement.getContext('2d');
+                        this.handleResize();
+                        this.generateBackgroundDecorations();
+                        this.renderLoop();
+                    },
+                    handleResize: function() {
+                        this.domElement.width = window.innerWidth;
+                        this.domElement.height = window.innerHeight;
+                    },
+                    generateBackgroundDecorations: function() {
+                        const colors = ['#8ED8FF', '#BFE8FF', '#FFFFFF', '#6BBEFF'];
+                        for(let i=0; i < 20; i++) {
+                            this.backgroundItems.push({
+                                x: Math.random() * window.innerWidth,
+                                y: Math.random() * window.innerHeight,
+                                size: Math.random() * 10 + 6,
+                                color: colors[Math.floor(Math.random() * colors.length)],
+                                driftSpeed: Math.random() * 0.3 + 0.1
+                            });
+                        }
+                    },
+                    renderLoop: function() {
+                        const self = App.Engine.Canvas;
+                        self.context.clearRect(0, 0, self.domElement.width, self.domElement.height);
+                        
+                        for(let i=0; i < self.backgroundItems.length; i++) {
+                            let item = self.backgroundItems[i];
+                            item.y -= item.driftSpeed;
+                            if (item.y < -20) item.y = self.domElement.height + 20;
+                            self.context.save();
+                            self.context.globalAlpha = 0.4;
+                            self.context.fillStyle = item.color;
+                            self.context.beginPath();
+                            self.context.arc(item.x, item.y, item.size, 0, Math.PI * 2);
+                            self.context.fill();
+                            self.context.restore();
+                        }
+
+                        for (let i = self.particleArray.length - 1; i >= 0; i--) {
+                            let p = self.particleArray[i];
+                            p.y += p.velocity.y; p.x += p.velocity.x; p.opacity -= p.decayRate;
+                            if (p.opacity <= 0) { self.particleArray.splice(i, 1); continue; }
+                            self.context.save();
+                            self.context.globalAlpha = p.opacity;
+                            self.context.fillStyle = p.color;
+                            self.context.fillRect(p.x, p.y, p.size, p.size);
+                            self.context.restore();
+                        }
+                        requestAnimationFrame(self.renderLoop);
+                    }
+                },
+
+                Particles: {
+                    spawnBurst: function(count) {
+                        const canvasObj = App.Engine.Canvas;
+                        const colors = ['#8ED8FF', '#4A6FA5', '#FFFFFF', '#6BBEFF'];
+                        for (let i = 0; i < count; i++) {
+                            canvasObj.particleArray.push({
+                                x: window.innerWidth / 2,
+                                y: window.innerHeight / 2,
+                                velocity: { x: (Math.random() - 0.5) * 12, y: (Math.random() - 0.7) * 8 - 2 },
+                                size: Math.random() * 6 + 5,
+                                opacity: 1,
+                                decayRate: Math.random() * 0.015 + 0.008,
+                                color: colors[Math.floor(Math.random() * colors.length)]
+                            });
+                        }
+                    }
+                },
+
+                Audio: {
+                    ctx: null,
+                    synthesizeTone: function(freq, wave, duration) {
+                        try {
+                            if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                            let osc = this.ctx.createOscillator();
+                            let gain = this.ctx.createGain();
+                            osc.type = wave || 'sine';
+                            osc.frequency.value = freq || 400;
+                            gain.gain.setValueAtTime(0.06, this.ctx.currentTime);
+                            gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+                            osc.connect(gain); gain.connect(this.ctx.destination);
+                            osc.start(); osc.stop(this.ctx.currentTime + duration);
+                        } catch(e) { console.warn(e); }
+                    },
+                    pop: function() { this.synthesizeTone(600, 'sine', 0.08); },
+                    click: function() { this.synthesizeTone(450, 'triangle', 0.05); },
+                    success: function() { this.synthesizeTone(550, 'sine', 0.1); setTimeout(() => this.synthesizeTone(700, 'sine', 0.2), 100); },
+                    fail: function() { this.synthesizeTone(200, 'sawtooth', 0.3); }
+                }
+            },
+
+            Router: {
+                navigate: function(id) {
+                    App.Engine.Audio.click();
+                    document.querySelectorAll('.app-stage').forEach(s => s.classList.remove('active'));
+                    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                    
+                    const targetView = document.getElementById('stage-' + id);
+                    const targetNav = document.getElementById('nav-' + id);
+                    if (targetView) targetView.classList.add('active');
+                    if (targetNav) targetNav.classList.add('active');
+                    
+                    App.State.activeStage = id;
+                    if (id === 'cake') App.Modules.Cake.initMic();
+                }
+            },
+
+            Modules: {
+                Music: {
+                    audioNode: null,
+                    currentTrackIndex: -1,
+                    tracks: [
+                        { title: "Be With You", url: "Be With You.mp3" },
+                        { title: "Maybe", url: "Maybe.mp3" },
+                        { title: "Someday", url: "Someday.mp3" }
+                    ],
+                    assembleCabinet: function() {
+                        this.audioNode = document.getElementById('core-audio-node');
+                        const listTray = document.getElementById('dvd-tracks-injector-target');
+                        listTray.innerHTML = '';
+                        
+                        this.tracks.forEach((track, index) => {
+                            const row = document.createElement('div');
+                            row.className = 'track-row-item';
+                            row.innerHTML = `<span>${index + 1}. ${track.title}</span><span style="font-size:0.75rem;">▶</span>`;
+                            row.onclick = () => this.selectAndPlay(index);
+                            listTray.appendChild(row);
+                        });
+                    },
+                    selectAndPlay: function(index) {
+                        App.Engine.Audio.pop();
+                        const marquee = document.getElementById('dvd-track-marquee-text');
+                        const disc = document.getElementById('dvd-spinning-disc-element');
+                        
+                        if(this.currentTrackIndex === index && !this.audioNode.paused) {
+                            this.audioNode.pause();
+                            disc.classList.remove('spinning');
+                            marquee.innerText = "Paused: " + this.tracks[index].title;
+                            return;
+                        }
+
+                        this.currentTrackIndex = index;
+                        this.audioNode.src = this.tracks[index].url;
+                        
+                        document.querySelectorAll('.track-row-item').forEach((r, idx) => {
+                            r.classList.toggle('active', idx === index);
+                        });
+
+                        marquee.innerText = "Reading Tray... Track " + (index + 1);
+                        
+                        this.audioNode.play().then(() => {
+                            disc.classList.add('spinning');
+                            marquee.innerText = "Playing: " + this.tracks[index].title;
+                        }).catch(() => {
+                            marquee.innerText = "Error Loading Audio Stream Path";
+                            disc.classList.remove('spinning');
+                        });
+                    }
+                },
+                Letter: {
+                    open: function() {
+                        App.Engine.Audio.pop();
+                        document.getElementById('interactive-envelope-wrapper').classList.add('opened');
+                    },
+                    close: function() {
+                        App.Engine.Audio.click();
+                        document.getElementById('interactive-envelope-wrapper').classList.remove('opened');
+                    }
+                },
+                Gallery: {
+                    open: function(title, d) {
+                        App.Engine.Audio.pop();
+                        document.getElementById('lb-title-node').innerText = title;
+                        document.getElementById('lb-desc-node').innerText = d;
+                        document.getElementById('global-scrapbook-lightbox').classList.add('active');
+                    },
+                    close: function() {
+                        App.Engine.Audio.click();
+                        document.getElementById('global-scrapbook-lightbox').classList.remove('active');
+                    }
+                },
+                Gift: {
+                    unbox: function() {
+                        if (App.State.giftBoxOpened) return;
+                        const box = document.getElementById('gift-box-interactive-node');
+                        box.classList.remove('idle-float'); box.classList.add('shake-action');
+                        App.Engine.Audio.synthesizeTone(300, 'square', 0.25);
+                        
+                        setTimeout(() => {
+                            box.classList.remove('shake-action'); box.classList.add('unboxed');
+                            App.State.giftBoxOpened = true;
+                            document.getElementById('gift-status-label').innerText = "✨ Hope your year is spectacular! ✨";
+                            App.Engine.Audio.success();
+                            App.Engine.Particles.spawnBurst(60);
+                        }, 1000);
+                    }
+                },
+                Garden: {
+                    triggerBloom: function(el) {
+                        if (el.classList.contains('bloomed')) return;
+                        el.classList.add('bloomed'); App.Engine.Audio.pop();
+                    }
+                },
+                Cake: {
+                    stream: null, analyser: null,
+                    initMic: function() {
+                        if (this.stream || !App.State.candlesActive) return;
+                        const label = document.getElementById('mic-badge-status');
+                        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                            navigator.mediaDevices.getUserMedia({ audio: true }).then(s => {
+                                this.stream = s;
+                                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                                const src = ctx.createMediaStreamSource(s);
+                                this.analyser = ctx.createAnalyser(); this.analyser.fftSize = 256;
+                                src.connect(this.analyser);
+                                label.innerText = "🎤 Blow into your microphone!";
+                                this.poll();
+                            }).catch(() => { label.innerText = "Mic connection fallback active."; });
+                        }
+                    },
+                    poll: function() {
+                        if (!App.State.candlesActive || !this.analyser) return;
+                        const data = new Uint8Array(this.analyser.frequencyBinCount);
+                        this.analyser.getByteFrequencyData(data);
+                        let sum = 0; for(let i=0; i<data.length; i++) sum += data[i];
+                        if ((sum / data.length) > 55) { this.extinguishCandle(); }
+                        else { requestAnimationFrame(() => this.poll()); }
+                    },
+                    extinguishCandle: function() {
+                        if (!App.State.candlesActive) return;
+                        App.State.candlesActive = false;
+                        document.getElementById('candle-flame-vector').classList.add('blown-out');
+                        App.Engine.Audio.success(); App.Engine.Particles.spawnBurst(120);
+                        document.getElementById('mic-badge-status').innerText = "🎂 Sparked successfully!";
+                        if (this.stream) { this.stream.getTracks().forEach(t => t.stop()); this.stream = null; }
+                        setTimeout(() => App.Router.navigate('celebration'), 1200);
+                    }
+                },
+                Config: {
+                    open: function() {
+                        App.Engine.Audio.pop();
+                        document.getElementById('config-pin-field').value = App.State.masterSecurityPin;
+                        document.getElementById('global-config-lightbox').classList.add('active');
+                    },
+                    save: function() {
+                        const val = document.getElementById('config-pin-field').value;
+                        if (val.length === 4 && !isNaN(val)) {
+                            App.State.masterSecurityPin = val;
+                            App.Engine.Audio.success();
+                            this.close();
+                        } else { App.Engine.Audio.fail(); }
+                    },
+                    close: function() {
+                        App.Engine.Audio.click();
+                        document.getElementById('global-config-lightbox').classList.remove('active');
+                    }
+                }
+            },
+
+            UX: {
+                executePreloader: function() {
+                    let progress = 0;
+                    const bar = document.getElementById('loader-progress-bar');
+                    const label = document.getElementById('loader-numerical-view');
+                    const clock = setInterval(() => {
+                        progress += Math.floor(Math.random() * 12) + 4;
+                        if (progress >= 100) {
+                            progress = 100; clearInterval(clock);
+                            setTimeout(() => {
+                                const stage = document.getElementById('preloader-stage');
+                                stage.style.opacity = '0'; stage.style.pointerEvents = 'none';
+                                App.Auth.init();
+                            }, 300);
+                        }
+                        bar.style.width = progress + '%';
+                        label.innerText = 'Opening Scrapbook... ' + progress + '%';
+                    }, 60);
+                }
+            },
+
+            Auth: {
+                init: function() { document.getElementById('auth-stage').classList.add('active'); },
+                append: function(n) {
+                    if (App.State.inputPinBuffer.length >= 4) return;
+                    App.Engine.Audio.synthesizeTone(350 + (n * 30), 'sine', 0.08);
+                    App.State.inputPinBuffer += n; this.draw();
+                    if (App.State.inputPinBuffer.length === 4) setTimeout(() => this.check(), 200);
+                },
+                drop: function() { App.Engine.Audio.click(); App.State.inputPinBuffer = App.State.inputPinBuffer.slice(0, -1); this.draw(); },
+                clear: function() { App.Engine.Audio.click(); App.State.inputPinBuffer = ''; this.draw(); },
+                draw: function() {
+                    for (let i = 0; i < 4; i++) {
+                        document.getElementById('pindot-' + i).classList.toggle('filled', i < App.State.inputPinBuffer.length);
+                    }
+                },
+                check: function() {
+                    if (App.State.inputPinBuffer === App.State.masterSecurityPin) {
+                        App.Engine.Audio.success(); App.Engine.Particles.spawnBurst(35);
+                        document.getElementById('auth-stage').classList.remove('active');
+                        document.getElementById('app-hub-layer').classList.add('active');
+                        App.Router.navigate('home');
+                    } else {
+                        App.Engine.Audio.fail();
+                        const card = document.getElementById('auth-shaking-node');
+                        card.classList.add('error-shake');
+                        setTimeout(() => { card.classList.remove('error-shake'); this.clear(); }, 400);
+                    }
+                }
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => App.init());
+    </script>
+</body>
+</html>
